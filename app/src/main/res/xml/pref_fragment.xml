@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="currency_category"
+        app:title="Currency Settings">
+        <EditTextPreference
+            android:defaultValue="@string/defaultNumberOfDaysSetting"
+            android:key="@string/numberOfDaysKey"
+            android:title="@string/numberOfDays" />
+        <ListPreference
+            android:defaultValue="@string/RUB"
+            android:entries="@array/currencies_array"
+            android:entryValues="@array/currencies_array"
+            android:key="@string/currencySelectKey"
+            android:title="@string/currencySelect" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="app_category"
+        app:title="App Settings">
+        <EditTextPreference
+            android:defaultValue="@string/defaultTextSizeSetting"
+            android:key="@string/textSizeKey"
+            android:title="@string/textSize" />
+        <SwitchPreference
+            android:defaultValue="@bool/defaultItalicsText"
+            android:key="@string/italicsTextKey"
+            android:title="@string/italicsText" />
+        <SwitchPreference
+            android:defaultValue="@bool/defaultBoldText"
+            android:key="@string/boldTextKey"
+            android:title="@string/boldText" />
+        <SwitchPreference
+            android:defaultValue="@bool/defaultRussianLanguage"
+            android:key="@string/russianLanguageKey"
+            android:title="@string/russianLanguage" />
+        <SwitchPreference
+            android:defaultValue="@bool/defaultDarkTheme"
+            android:key="@string/darkThemeKey"
+            android:title="@string/darkTheme" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">CurrencyExchangeApplication</string>
+    <string name="settingsMenu">Settings</string>
+    <string name="kitten">Kitten</string>
+    <string name="numberOfDays">Number of days</string>
+    <string name="textSize">Text size</string>
+    <string name="italicsText">Italics text</string>
+    <string name="boldText">Bold text</string>
+    <string name="darkTheme">Dark theme</string>
+    <string name="currencySelect">Select currency</string>
+    <string name="russianLanguage">Russian language</string>
+    <string name="numberOfDaysKey" translatable="false">Number of days</string>
+    <string name="textSizeKey" translatable="false">Text size</string>
+    <string name="italicsTextKey" translatable="false">Italics text</string>
+    <string name="boldTextKey" translatable="false">Bold text</string>
+    <string name="darkThemeKey" translatable="false">Dark theme</string>
+    <string name="currencySelectKey" translatable="false">Select currency</string>
+    <string name="russianLanguageKey" translatable="false">Russian language</string>
+    <string name="defaultNumberOfDaysSetting" translatable="false">7</string>
+    <string name="defaultTextSizeSetting" translatable="false">20</string>
+    <string name="RUB" translatable="false">RUB</string>
+    <string name="USD" translatable="false">USD</string>
+    <string name="EUR" translatable="false">EUR</string>
 </resources>

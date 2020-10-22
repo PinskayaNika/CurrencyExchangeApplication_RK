@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="defaultItalicsText">false</bool>
+    <bool name="defaultBoldText">false</bool>
+    <bool name="defaultDarkTheme">false</bool>
+    <bool name="defaultRussianLanguage">false</bool>
+</resources>

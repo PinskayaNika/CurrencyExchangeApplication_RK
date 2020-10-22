@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Приложение обмена валют</string>
+    <string name="settingsMenu">Настройки</string>
+    <string name="numberOfDays">Количество дней</string>
+    <string name="textSize">Размер текста</string>
+    <string name="italicsText">Курсивный текст</string>
+    <string name="boldText">Полужирный текст</string>
+    <string name="kitten">Котёнок</string>
+    <string name="darkTheme">Тёмная тема</string>
+    <string name="currencySelect">Выберите валюту</string>
+    <string name="russianLanguage">Русский язык</string>
+</resources>
