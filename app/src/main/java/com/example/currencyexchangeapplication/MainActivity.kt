@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         var isSettedLanguage = false
     }
 
-    private var numberOfDays: Int? = 7
+    private var numberOfDays: Int? = 5
     private var currency: String? = "RUB"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +33,31 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+
+        val bitcoinDayList = arrayListOf(
+            CryptoCurrencyByDay(Date(2020, 10, 19), 19.0),
+            CryptoCurrencyByDay(Date(2020, 10, 20), 20.0),
+            CryptoCurrencyByDay(Date(2020, 10, 21), 21.0),
+            CryptoCurrencyByDay(Date(2020, 10, 22), 22.0),
+            CryptoCurrencyByDay(Date(2020, 10, 23), 23.0)
+        )
+
+        val efiriumDayList = arrayListOf(
+            CryptoCurrencyByDay(Date(2020, 9, 19), 19.0),
+            CryptoCurrencyByDay(Date(2020, 9, 20), 20.0),
+            CryptoCurrencyByDay(Date(2020, 9, 21), 21.0),
+            CryptoCurrencyByDay(Date(2020, 9, 22), 22.0),
+            CryptoCurrencyByDay(Date(2020, 9, 23), 23.0)
+        )
+
+        val cryptoCurrencies = arrayListOf(
+            CryptoCurrency("Bitcoin", bitcoinDayList),
+            CryptoCurrency("Efirium", efiriumDayList)
+        )
+
+        val cryptoCurrenciesByDayView = findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)
+        cryptoCurrenciesByDayView.setHasFixedSize(false)
+        cryptoCurrenciesByDayView.adapter = CryptoCurrencyAdapter(cryptoCurrencies, numberOfDays!!)
 
         setSettings(sharedPreferences)
     }
@@ -78,6 +104,9 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         )!!.toFloat()
 
         findViewById<TextView>(R.id.kittenText).textSize = size
+        /*findViewById<TextView>(R.id.cryptoCurrencyName)?.textSize = size
+        findViewById<TextView>(R.id.cryptoCurrencyValue)?.textSize = size
+        findViewById<TextView>(R.id.cryptoCurrencyDate)?.textSize = size*/
     }
 
     private fun setTypeface(sharedPreferences: SharedPreferences) {
@@ -103,6 +132,9 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         }
 
         findViewById<TextView>(R.id.kittenText).setTypeface(null, typeface)
+        /*findViewById<TextView>(R.id.cryptoCurrencyName)?.setTypeface(null, typeface)
+        findViewById<TextView>(R.id.cryptoCurrencyValue)?.setTypeface(null, typeface)
+        findViewById<TextView>(R.id.cryptoCurrencyDate)?.setTypeface(null, typeface)*/
     }
 
     private fun setDarkTheme(sharedPreferences: SharedPreferences) {
@@ -139,15 +171,15 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
     }
 
     private fun setTextColor(color: Int) {
-        val textView = findViewById<TextView>(R.id.kittenText)
-
-        textView.setTextColor(color)
+        findViewById<TextView>(R.id.kittenText).setTextColor(color)
+        /*  findViewById<TextView>(R.id.cryptoCurrencyName)?.setTextColor(color)
+          findViewById<TextView>(R.id.cryptoCurrencyValue)?.setTextColor(color)
+          findViewById<TextView>(R.id.cryptoCurrencyDate)?.setTextColor(color)*/
     }
 
     private fun setBackgroundColor(color: Int) {
-        val mainActivityScreen = findViewById<LinearLayout>(R.id.activity_main)
-
-        mainActivityScreen.setBackgroundColor(color)
+        findViewById<LinearLayout>(R.id.activity_main).setBackgroundColor(color)
+        /*findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)?.setBackgroundColor(color)*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
