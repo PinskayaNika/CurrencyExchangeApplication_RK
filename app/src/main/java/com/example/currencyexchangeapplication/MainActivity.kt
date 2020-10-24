@@ -68,14 +68,25 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
     private fun setSettings(sharedPreferences: SharedPreferences) {
         if (!isSettedLanguage) {
             isSettedLanguage = true
+            setLanguageWithReload(sharedPreferences)
+        } else
             setLanguage(sharedPreferences)
-        }
         setTextSize(sharedPreferences)
         setTypeface(sharedPreferences)
         setDarkTheme(sharedPreferences)
 
         setNumberOfDays(sharedPreferences)
         setCurrency(sharedPreferences)
+    }
+
+    private fun setLanguageWithReload(sharedPreferences: SharedPreferences) {
+        setLanguage(sharedPreferences)
+
+        val mainIntent = Intent(this, MainActivity::class.java)
+        finish()
+        startActivity(mainIntent)
+
+        overridePendingTransition(0, 0)
     }
 
     private fun setLanguage(sharedPreferences: SharedPreferences) {
@@ -92,12 +103,6 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         val config = Configuration()
         config.locale = locale
         resources.updateConfiguration(config, null)
-
-        val mainIntent = Intent(this, MainActivity::class.java)
-        finish()
-        startActivity(mainIntent)
-
-        overridePendingTransition(0, 0)
     }
 
     private fun setTextSize(sharedPreferences: SharedPreferences) {
@@ -230,7 +235,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
                 ccAdapter.notifyDataSetChanged()
             }
             getString(R.string.russianLanguageKey) -> {
-                setLanguage(sharedPreferences)
+                setLanguageWithReload(sharedPreferences)
             }
             getString(R.string.darkThemeKey) -> {
                 setDarkTheme(sharedPreferences)
