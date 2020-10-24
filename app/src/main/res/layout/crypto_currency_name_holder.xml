@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="3dp"
-        android:textSize="30sp" />
+        android:padding="3dp"
+        android:textAlignment="center" />
 
 </androidx.cardview.widget.CardView>

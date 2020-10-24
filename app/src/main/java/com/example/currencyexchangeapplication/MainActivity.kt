@@ -22,8 +22,10 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
     Preference.OnPreferenceChangeListener {
     companion object {
         var isSettedLanguage = false
+        internal lateinit var sharedPreferences: SharedPreferences
     }
 
+    private lateinit var ccAdapter: CryptoCurrencyAdapter
     private var numberOfDays: Int? = 5
     private var currency: String? = "RUB"
 
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         val bitcoinDayList = arrayListOf(
@@ -57,7 +59,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 
         val cryptoCurrenciesByDayView = findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)
         cryptoCurrenciesByDayView.setHasFixedSize(false)
-        cryptoCurrenciesByDayView.adapter = CryptoCurrencyAdapter(cryptoCurrencies, numberOfDays!!)
+        ccAdapter = CryptoCurrencyAdapter(this, cryptoCurrencies, numberOfDays!!)
+        cryptoCurrenciesByDayView.adapter = ccAdapter
 
         setSettings(sharedPreferences)
     }
@@ -104,9 +107,6 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         )!!.toFloat()
 
         findViewById<TextView>(R.id.kittenText).textSize = size
-        /*findViewById<TextView>(R.id.cryptoCurrencyName)?.textSize = size
-        findViewById<TextView>(R.id.cryptoCurrencyValue)?.textSize = size
-        findViewById<TextView>(R.id.cryptoCurrencyDate)?.textSize = size*/
     }
 
     private fun setTypeface(sharedPreferences: SharedPreferences) {
@@ -132,9 +132,6 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         }
 
         findViewById<TextView>(R.id.kittenText).setTypeface(null, typeface)
-        /*findViewById<TextView>(R.id.cryptoCurrencyName)?.setTypeface(null, typeface)
-        findViewById<TextView>(R.id.cryptoCurrencyValue)?.setTypeface(null, typeface)
-        findViewById<TextView>(R.id.cryptoCurrencyDate)?.setTypeface(null, typeface)*/
     }
 
     private fun setDarkTheme(sharedPreferences: SharedPreferences) {
@@ -172,14 +169,10 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 
     private fun setTextColor(color: Int) {
         findViewById<TextView>(R.id.kittenText).setTextColor(color)
-        /*  findViewById<TextView>(R.id.cryptoCurrencyName)?.setTextColor(color)
-          findViewById<TextView>(R.id.cryptoCurrencyValue)?.setTextColor(color)
-          findViewById<TextView>(R.id.cryptoCurrencyDate)?.setTextColor(color)*/
     }
 
     private fun setBackgroundColor(color: Int) {
         findViewById<LinearLayout>(R.id.activity_main).setBackgroundColor(color)
-        /*findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)?.setBackgroundColor(color)*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -230,21 +223,26 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         when (s) {
             getString(R.string.italicsTextKey), getString(R.string.boldTextKey) -> {
                 setTypeface(sharedPreferences)
+                ccAdapter.notifyDataSetChanged()
             }
             getString(R.string.textSizeKey) -> {
                 setTextSize(sharedPreferences)
+                ccAdapter.notifyDataSetChanged()
             }
             getString(R.string.russianLanguageKey) -> {
                 setLanguage(sharedPreferences)
             }
             getString(R.string.darkThemeKey) -> {
                 setDarkTheme(sharedPreferences)
+                ccAdapter.notifyDataSetChanged()
             }
             getString(R.string.numberOfDaysKey) -> {
                 setNumberOfDays(sharedPreferences)
+                ccAdapter.notifyDataSetChanged()
             }
             getString(R.string.currencySelectKey) -> {
                 setCurrency(sharedPreferences)
+                ccAdapter.notifyDataSetChanged()
             }
         }
     }
