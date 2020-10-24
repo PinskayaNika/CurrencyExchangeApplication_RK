@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
     Preference.OnPreferenceChangeListener {
     companion object {
         var isSettedLanguage = false
+        var isChangedOrientation = false
+        var lastOrientation = 0
         internal lateinit var sharedPreferences: SharedPreferences
     }
 
@@ -66,11 +68,17 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
     }
 
     private fun setSettings(sharedPreferences: SharedPreferences) {
-        if (!isSettedLanguage) {
+        isChangedOrientation =
+            (lastOrientation == 0 && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) ||
+                    (lastOrientation == 1 && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+
+        lastOrientation =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 0
+
+        if (!isSettedLanguage || isChangedOrientation) {
             isSettedLanguage = true
             setLanguageWithReload(sharedPreferences)
-        } else
-            setLanguage(sharedPreferences)
+        }
         setTextSize(sharedPreferences)
         setTypeface(sharedPreferences)
         setDarkTheme(sharedPreferences)
