@@ -13,6 +13,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
@@ -65,6 +67,9 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         cryptoCurrenciesByDayView.adapter = ccAdapter
 
         setSettings(sharedPreferences)
+
+        val navController = this.findNavController(R.id.test_nav_fragment)
+        NavigationUI.setupActionBarWithNavController(this, navController)
     }
 
     private fun setSettings(sharedPreferences: SharedPreferences) {
@@ -85,6 +90,12 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 
         setNumberOfDays(sharedPreferences)
         setCurrency(sharedPreferences)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = this.findNavController(R.id.test_nav_fragment)
+
+        return navController.navigateUp()
     }
 
     private fun setLanguageWithReload(sharedPreferences: SharedPreferences) {
@@ -197,7 +208,11 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         if (item.itemId == R.id.settingsMenu) {
             val settingIntent = Intent(this, SettingsActivity::class.java)
             startActivity(settingIntent)
-        }
+        } else
+            if (item.itemId == R.id.updaing) {
+                //Заново выгружаются данные из интернета
+            }
+
         return super.onOptionsItemSelected(item)
     }
 
