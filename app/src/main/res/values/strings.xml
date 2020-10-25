@@ -21,4 +21,11 @@
     <string name="RUB" translatable="false">RUB</string>
     <string name="USD" translatable="false">USD</string>
     <string name="EUR" translatable="false">EUR</string>
+
+
+    <string name="updating">Update</string>
+    <string name="curseInfo">Curse information</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

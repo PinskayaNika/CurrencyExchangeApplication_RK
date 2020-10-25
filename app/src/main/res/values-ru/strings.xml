@@ -10,4 +10,7 @@
     <string name="darkTheme">Тёмная тема</string>
     <string name="currencySelect">Выберите валюту</string>
     <string name="russianLanguage">Русский язык</string>
+
+    <string name="updating">Обновить</string>
+    <string name="curseInfo">Информация о курсе</string>
 </resources>

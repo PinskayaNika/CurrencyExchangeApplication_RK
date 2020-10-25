@@ -16,6 +16,17 @@
         android:padding="5dp"
         android:text="@string/kitten" />
 
+
+    <fragment
+        android:id="@+id/test_nav_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/navigation"
+        app:defaultNavHost="true"
+        />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cryptoCurrenciesByDay"
         android:layout_width="match_parent"
