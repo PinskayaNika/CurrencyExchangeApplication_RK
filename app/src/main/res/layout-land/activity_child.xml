@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <layout >
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ChildActivity">
+
+            <TextView
+                android:id="@+id/curseInfo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="30dp"
+                android:text="@string/curseInfo" />
+
+            <TextView
+                android:id="@+id/textDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="40dp"
+                android:text="date:"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/textOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="open:"
+                android:layout_below="@+id/textDate"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/textClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="close:"
+                android:layout_below="@+id/textOpen"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/textMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="min:"
+                android:layout_below="@+id/textClose"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/textMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="max:"
+                android:layout_below="@+id/textMin"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/textVolumeFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="volumeFrom:"
+                android:layout_below="@+id/textMax"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/textVolumeTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="volumeTo:"
+                android:layout_below="@+id/textVolumeFrom"
+                tools:ignore="MissingConstraints" />
+        </RelativeLayout>
+    </layout>
+
