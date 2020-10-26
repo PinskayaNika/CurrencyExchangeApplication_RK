@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
+        //Примеры для тестирования recyclerView
         val bitcoinDayList = arrayListOf(
             CryptoCurrencyByDay(Date(2020, 10, 19), 19.0),
             CryptoCurrencyByDay(Date(2020, 10, 20), 20.0),
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
             CryptoCurrencyByDay(Date(2020, 10, 23), 23.0)
         )
 
+        //Примеры для тестирования recyclerView
         val efiriumDayList = arrayListOf(
             CryptoCurrencyByDay(Date(2020, 9, 19), 19.0),
             CryptoCurrencyByDay(Date(2020, 9, 20), 20.0),
@@ -83,8 +85,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 
         setSettings(sharedPreferences)
 
-        val navController = this.findNavController(R.id.test_nav_fragment)
-        NavigationUI.setupActionBarWithNavController(this, navController)
+//        val navController = this.findNavController(R.id.test_nav_fragment)
+//        NavigationUI.setupActionBarWithNavController(this, navController)
 
 //        val adapter = CryptoCurrencyAdapter(getRecords(limit = limit?.minus(1)), object : CryptoCurrencyAdapter.Callback {
 //            override fun onItemClicked(item: Record) {
