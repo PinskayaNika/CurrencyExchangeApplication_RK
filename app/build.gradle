@@ -36,6 +36,9 @@ android {
     dataBinding {
         enabled = true
     }
+    buildFeatures {
+        dataBinding true
+    }
 }
 
 dependencies {
@@ -62,14 +65,29 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit2_version"
-//    implementation "com.squareup.retrofit2:converter-gson:2.3.0"
-    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
     def nav_version = "2.3.0"
 
     def kotlinCoroutineVersion = "1.0.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinCoroutineVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion"
 
+    implementation "io.reactivex.rxjava2:rxkotlin:$version_rxkoltin"
+
+
+
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation "org.kodein.di:kodein-di-generic-jvm:$version_kodein"
+    implementation "com.squareup.picasso:picasso:2.71828"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
+    implementation "com.squareup.moshi:moshi:$moshiVersion"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$version_retrofit_coroutines_adapter"
+    implementation ("com.squareup.okhttp3:okhttp:3.11.0") {
+        force = true
+    }
+    implementation 'androidx.preference:preference:1.1.1'
 }
 
 kapt {

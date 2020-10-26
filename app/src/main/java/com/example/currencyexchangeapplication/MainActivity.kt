@@ -18,10 +18,21 @@ import androidx.navigation.ui.NavigationUI
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.schedulers.Schedulers
 import java.util.*
+import com.example.currencyexchangeapplication.databinding.ActivityMainBinding
+import com.example.currencyexchangeapplication.Data
+import com.example.currencyexchangeapplication.Data.Record
+
+import com.example.currencyexchangeapplication.Repository
+
 
 class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
     Preference.OnPreferenceChangeListener {
+
+    private val API_KEY = "4f9366a4993b0698da075875200877a598a73c430d397e3304564dd2b2d4186b"
+    private lateinit var binding : ActivityMainBinding
+
     companion object {
         var isSettedLanguage = false
         var isChangedOrientation = false
@@ -61,6 +72,10 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
             CryptoCurrency("Efirium", efiriumDayList)
         )
 
+
+        val limit = sharedPreferences.getString("limit", "10")?.toInt()
+
+
         val cryptoCurrenciesByDayView = findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)
         cryptoCurrenciesByDayView.setHasFixedSize(false)
         ccAdapter = CryptoCurrencyAdapter(this, cryptoCurrencies, numberOfDays!!)
@@ -70,6 +85,56 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 
         val navController = this.findNavController(R.id.test_nav_fragment)
         NavigationUI.setupActionBarWithNavController(this, navController)
+
+//        val adapter = CryptoCurrencyAdapter(getRecords(limit = limit?.minus(1)), object : CryptoCurrencyAdapter.Callback {
+//            override fun onItemClicked(item: Record) {
+//                openDetailedInfo(item)
+//            }
+//        })
+    }
+
+//    override fun onRefresh() {
+//        binding.swipeContainer.isRefreshing = true
+//        binding.swipeContainer.postDelayed({
+//            run() {
+//                val fsym = binding.spinnerCrypto.selectedItem.toString()
+//                val tsym = binding.spinnerMoney.selectedItem.toString()
+//
+//                val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+//                val limit = prefs.getString("limit", "10")?.toInt()
+//                val adapter = Adapter(getRecords(limit = limit?.minus(1)), object : Adapter.Callback {
+//                    override fun onItemClicked(item: Record) {
+//                        openDetailedInfo(item)
+//                    }
+//                })
+//                binding.swipeContainer.isRefreshing = false
+//                binding.recyclerview.adapter = adapter
+//                binding.infoChosen.text = "Курс за $limit дней пара $fsym/$tsym"
+//            }
+//        }, 3000)
+//    }
+
+    private fun openDetailedInfo(item: Record) {
+        val intent = Intent(this, ChildActivity::class.java)
+        intent.putExtra("time", item.time)
+            .putExtra("open", item.open)
+            .putExtra("close", item.close)
+            .putExtra("low", item.low)
+            .putExtra("high", item.high)
+            .putExtra("volumeFrom", item.volumeFrom)
+            .putExtra("volumeTo", item.volumeTo)
+        startActivity(intent)
+    }
+
+    private fun getRecords(limit: Int?): List<Record> {
+        val repository = Repository(API_KEY)
+        return repository.getHistory(limit = limit)
+            .subscribeOn(Schedulers.io())
+            .toFlowable()
+            .flatMapIterable { answer -> answer.days.records }
+            .toList()
+            .blockingGet()
+            .reversed()
     }
 
     private fun setSettings(sharedPreferences: SharedPreferences) {
@@ -211,6 +276,22 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         } else
             if (item.itemId == R.id.updaing) {
                 //Заново выгружаются данные из интернета
+//                run() {
+//
+//
+//                    //val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+//                    val limit = sharedPreferences.getString("limit", "10")?.toInt()
+//                    val adapter = CryptoCurrencyAdapter(
+//                        getRecords(limit = limit?.minus(1)),
+//                        object : CryptoCurrencyAdapter.Callback {
+//                            override fun onItemClicked(item: Record) {
+//                                openDetailedInfo(item)
+//                            }
+//                        })
+//
+//                    binding.cryptoCurrenciesByDay?.adapter = adapter
+//                }
+
             }
 
         return super.onOptionsItemSelected(item)
