@@ -1,11 +1,16 @@
 package com.example.currencyexchangeapplication
 
+//import android.app.Fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import java.util.ArrayList
+import kotlinx.android.synthetic.main.fragment_list.*
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,10 +42,10 @@ class ListFragment : Fragment() {
         // Inflate the layout for this fragment
        // return inflater.inflate(R.layout.fragment_list, container, false)
         val view: View = inflater.inflate(R.layout.fragment_list, container, false)
-        val getCursBtn: Button = view.findViewById(R.id.get_curs_btn)
-        getCursBtn.setOnClickListener {
-           // sendNewsRequest()
-        }
+//        val getCursBtn: Button = view.findViewById(R.id.get_curs_btn)
+//        getCursBtn.setOnClickListener {
+//           // sendNewsRequest()
+//        }
         return view
     }
     //private lateinit var vm: MainViewModel
@@ -50,6 +55,19 @@ class ListFragment : Fragment() {
 ////        progressDialog.show(parentFragmentManager, "progress dialog")
 //        vm.loadCurs()
 //    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        cryptoCurrenciesByDay.layoutManager = LinearLayoutManager(this.context)
+        cryptoCurrenciesByDay.setHasFixedSize(true)
+        cryptoCurrenciesByDay.adapter = CryptoCurrencyAdapter(this.requireContext(), ArrayList<CryptoCurrencyByDay>(), 1)
+
+        val mainActivity = (this.activity as MainActivity)
+        currency_input.setText(mainActivity.currencyFrom)
+        //mainActivity.onRefresh(mainActivity.currencyFrom, mainActivity.currencyTo, mainActivity.numberOfDays)
+    }
 
     companion object {
         /**

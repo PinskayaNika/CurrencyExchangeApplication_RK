@@ -7,10 +7,10 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -18,13 +18,18 @@ import androidx.navigation.ui.NavigationUI
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 import com.example.currencyexchangeapplication.databinding.ActivityMainBinding
-import com.example.currencyexchangeapplication.Data
-import com.example.currencyexchangeapplication.Data.Record
-
-import com.example.currencyexchangeapplication.Repository
+import com.example.currencyexchangeapplication.Data.ChildData
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import okhttp3.logging.HttpLoggingInterceptor
+import kotlinx.android.synthetic.main.fragment_list.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
@@ -32,6 +37,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 
     private val API_KEY = "4f9366a4993b0698da075875200877a598a73c430d397e3304564dd2b2d4186b"
     private lateinit var binding : ActivityMainBinding
+
+    lateinit var cryptoCompareServiceApi: Service
 
     companion object {
         var isSettedLanguage = false
@@ -41,82 +48,134 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
     }
 
     private lateinit var ccAdapter: CryptoCurrencyAdapter
-    private var numberOfDays: Int? = 5
-    private var currency: String? = "RUB"
+    var numberOfDays: Int = 5
+    var currencyFrom: String = "RUB"
+    var currencyTo: String = "USD"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        //------------------------------------
 
-        //Примеры для тестирования recyclerView
-        val bitcoinDayList = arrayListOf(
-            CryptoCurrencyByDay(Date(2020, 10, 19), 19.0),
-            CryptoCurrencyByDay(Date(2020, 10, 20), 20.0),
-            CryptoCurrencyByDay(Date(2020, 10, 21), 21.0),
-            CryptoCurrencyByDay(Date(2020, 10, 22), 22.0),
-            CryptoCurrencyByDay(Date(2020, 10, 23), 23.0)
-        )
-
-        //Примеры для тестирования recyclerView
-        val efiriumDayList = arrayListOf(
-            CryptoCurrencyByDay(Date(2020, 9, 19), 19.0),
-            CryptoCurrencyByDay(Date(2020, 9, 20), 20.0),
-            CryptoCurrencyByDay(Date(2020, 9, 21), 21.0),
-            CryptoCurrencyByDay(Date(2020, 9, 22), 22.0),
-            CryptoCurrencyByDay(Date(2020, 9, 23), 23.0)
-        )
-
-        val cryptoCurrencies = arrayListOf(
-            CryptoCurrency("Bitcoin", bitcoinDayList),
-            CryptoCurrency("Efirium", efiriumDayList)
-        )
-
-
-        val limit = sharedPreferences.getString("limit", "10")?.toInt()
-
-
-        val cryptoCurrenciesByDayView = findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)
-        cryptoCurrenciesByDayView.setHasFixedSize(false)
-        ccAdapter = CryptoCurrencyAdapter(this, cryptoCurrencies, numberOfDays!!)
-        cryptoCurrenciesByDayView.adapter = ccAdapter
-
-        setSettings(sharedPreferences)
-
-//        val navController = this.findNavController(R.id.test_nav_fragment)
-//        NavigationUI.setupActionBarWithNavController(this, navController)
+        val navController = this.findNavController(R.id.test_nav_fragment)
+        NavigationUI.setupActionBarWithNavController(this, navController)
 
 //        val adapter = CryptoCurrencyAdapter(getRecords(limit = limit?.minus(1)), object : CryptoCurrencyAdapter.Callback {
 //            override fun onItemClicked(item: Record) {
 //                openDetailedInfo(item)
 //            }
 //        })
+        //------------------------------------
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        PreferenceManager.setDefaultValues(this, R.xml.pref_fragment, false)
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+
+//        if (savedInstanceState != null) {
+//            if (savedInstanceState.containsKey("from_currency")) {
+//                currencyFrom = savedInstanceState.getString("from_currency").toString()
+//            }
+//        }
+
+
+        //RecyclerView + подключение к нему настроек
+//        val cryptoCurrenciesByDayView = findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)
+//        cryptoCurrenciesByDayView.setHasFixedSize(false)
+//        ccAdapter = CryptoCurrencyAdapter(this, cryptoCurrencies, numberOfDays!!)
+//        cryptoCurrenciesByDayView.adapter = ccAdapter
+
+        numberOfDays = sharedPreferences.getString("days_number", "3")!!.toInt()
+        currencyTo = sharedPreferences.getString("currency", "USD")!!
+
+        //setSettings(sharedPreferences)
+
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
+        val BASE_URL = "https://min-api.cryptocompare.com/"
+
+        val retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)
+            .client(client)
+            .build()
+
+        cryptoCompareServiceApi = retrofit.create(Service::class.java)
+
+
+
+
+        setSettings(sharedPreferences)
+        //setAdapter(sharedPreferences)
+
     }
 
-//    override fun onRefresh() {
-//        binding.swipeContainer.isRefreshing = true
-//        binding.swipeContainer.postDelayed({
-//            run() {
-//                val fsym = binding.spinnerCrypto.selectedItem.toString()
-//                val tsym = binding.spinnerMoney.selectedItem.toString()
+    //------------------------------------
+
+    //функция обновления
+    fun onRefresh(fromCurrency: String, toCurrency: String, daysLimit: Int) {
+        val call: Call<Data.Answer> = cryptoCompareServiceApi.getHistory(fromCurrency, toCurrency, daysLimit-1)
+
+        call.enqueue(object: Callback<Data.Answer> {
+            override fun onFailure(call: Call<Data.Answer>, t: Throwable) {
+                Log.d("onFailure", t.message.toString())
+            }
+
+            override fun onResponse(call: Call<Data.Answer>, response: Response<Data.Answer>) {
+                val exampleList = ArrayList<CryptoCurrencyByDay>()
+
+                val rate: Data.Answer = response.body()!!
+                for (data in rate.days!!.childData!!) {
+                    exampleList += CryptoCurrencyByDay(data.time!!, data.open!!, fromCurrency, toCurrency, data.low!!, data.high!!)
+                }
+
+                cryptoCurrenciesByDay.adapter = CryptoCurrencyAdapter(this@MainActivity, exampleList, numberOfDays)
+            ccAdapter = CryptoCurrencyAdapter(this@MainActivity, exampleList, numberOfDays)
+            }
+        })
+    }
+
+//    private fun setAdapter(sharedPreferences: SharedPreferences) {
+//        //Примеры для тестирования recyclerView
+//        val bitcoinDayList = generateCurrenciesValues(sharedPreferences, 8)
+//        //Примеры для тестирования recyclerView
+//        val efiriumDayList = generateCurrenciesValues(sharedPreferences, 9)
 //
-//                val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-//                val limit = prefs.getString("limit", "10")?.toInt()
-//                val adapter = Adapter(getRecords(limit = limit?.minus(1)), object : Adapter.Callback {
-//                    override fun onItemClicked(item: Record) {
-//                        openDetailedInfo(item)
-//                    }
-//                })
-//                binding.swipeContainer.isRefreshing = false
-//                binding.recyclerview.adapter = adapter
-//                binding.infoChosen.text = "Курс за $limit дней пара $fsym/$tsym"
-//            }
-//        }, 3000)
+//        //массив списков для разных видов криптовалюты
+//        val cryptoCurrencies = arrayListOf(
+//            CryptoCurrencyByDay(getString(R.string.bitcoin), bitcoinDayList),
+//            CryptoCurrencyByDay(getString(R.string.efirium), efiriumDayList)
+//        )
+//
+//        val cryptoCurrenciesByDayView = findViewById<RecyclerView>(R.id.cryptoCurrenciesByDay)
+//        cryptoCurrenciesByDayView.setHasFixedSize(false)
+//        ccAdapter = CryptoCurrencyAdapter(this, cryptoCurrencies, numberOfDays!!)
+//        cryptoCurrenciesByDayView.adapter = ccAdapter
 //    }
 
-    private fun openDetailedInfo(item: Record) {
+//    private fun generateCurrenciesValues(
+//        sharedPreferences: SharedPreferences,
+//        m: Int
+//    ): ArrayList<CryptoCurrencyByDay> {
+//        val d: Int = sharedPreferences.getString(
+//            getString(R.string.numberOfDaysKey),
+//            getString(R.string.defaultNumberOfDaysSetting)
+//        )?.toInt()!!
+//
+//        val a: ArrayList<CryptoCurrencyByDay> = ArrayList()
+//        for (i in 1..d) {
+//            a.add(CryptoCurrencyByDay(Date(2020, m, 15 + i), 15.0 + i.toDouble()))
+//        }
+//
+//        return a
+//    }
+
+
+    private fun openDetailedInfo(item: ChildData) {
         val intent = Intent(this, ChildActivity::class.java)
         intent.putExtra("time", item.time)
             .putExtra("open", item.open)
@@ -128,17 +187,20 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         startActivity(intent)
     }
 
-    private fun getRecords(limit: Int?): List<Record> {
-        val repository = Repository(API_KEY)
-        return repository.getHistory(limit = limit)
-            .subscribeOn(Schedulers.io())
-            .toFlowable()
-            .flatMapIterable { answer -> answer.days.records }
-            .toList()
-            .blockingGet()
-            .reversed()
-    }
+//    private fun getRecords(limit: Int?): List<ChildData> {
+//        val repository = Repository(API_KEY)
+//        return repository.getHistory(limit = limit)
+//            .subscribeOn(Schedulers.io())
+//            .toFlowable()
+//            .flatMapp:layoutManager="LinearLayoutManager"apIterable { answer -> answer.days.childData }
+//            .toList()
+//            .blockingGet()
+//            .reversed()
+//    }
+    //------------------------------------
 
+
+    //Настройки
     private fun setSettings(sharedPreferences: SharedPreferences) {
         isChangedOrientation =
             (lastOrientation == 0 && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) ||
@@ -156,7 +218,8 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         setDarkTheme(sharedPreferences)
 
         setNumberOfDays(sharedPreferences)
-        setCurrency(sharedPreferences)
+        setCurrencyFrom(sharedPreferences)
+        setCurrencyTo(sharedPreferences)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -165,6 +228,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         return navController.navigateUp()
     }
 
+    //Получение языка при перезагрузке
     private fun setLanguageWithReload(sharedPreferences: SharedPreferences) {
         setLanguage(sharedPreferences)
 
@@ -175,6 +239,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         overridePendingTransition(0, 0)
     }
 
+    //Настройка языка
     private fun setLanguage(sharedPreferences: SharedPreferences) {
         val isRussianLanguage = sharedPreferences.getBoolean(
             getString(R.string.russianLanguageKey),
@@ -191,15 +256,17 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         resources.updateConfiguration(config, null)
     }
 
+    //Настройка размера текста
     private fun setTextSize(sharedPreferences: SharedPreferences) {
         val size: Float = sharedPreferences.getString(
             getString(R.string.textSizeKey),
             getString(R.string.defaultTextSizeSetting)
         )!!.toFloat()
 
-        findViewById<TextView>(R.id.kittenText).textSize = size
+        //findViewById<TextView>(R.id.kittenText).textSize = size
     }
 
+    //Настройка выделения текста (курсив/жирное выделение)
     private fun setTypeface(sharedPreferences: SharedPreferences) {
         val isItalic = sharedPreferences.getBoolean(
             getString(R.string.italicsTextKey),
@@ -222,9 +289,10 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
                 Typeface.NORMAL
         }
 
-        findViewById<TextView>(R.id.kittenText).setTypeface(null, typeface)
+        //findViewById<TextView>(R.id.kittenText).setTypeface(null, typeface)
     }
 
+    //Настройка темы (темная/светлая)
     private fun setDarkTheme(sharedPreferences: SharedPreferences) {
         val isDarkTheme = sharedPreferences.getBoolean(
             getString(R.string.darkThemeKey),
@@ -240,44 +308,67 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         }
     }
 
+    //Настройка количества дней
     private fun setNumberOfDays(sharedPreferences: SharedPreferences) {
         val numberOfDays: String? = sharedPreferences.getString(
             getString(R.string.numberOfDaysKey),
             getString(R.string.defaultNumberOfDaysSetting)
         )
 
-        this.numberOfDays = numberOfDays?.toInt()
+        this.numberOfDays = numberOfDays!!.toInt()
     }
 
-    private fun setCurrency(sharedPreferences: SharedPreferences) {
+    //Настройка валюты, которую переводят
+    private fun setCurrencyFrom(sharedPreferences: SharedPreferences) {
         val currency: String? = sharedPreferences.getString(
-            getString(R.string.currencySelectKey),
+            getString(R.string.currencyFromSelectKey),
             getString(R.string.defaultNumberOfDaysSetting)
         )
 
-        this.currency = currency
+        this.currencyFrom = currency!!
+    }
+    //Настройка валюты, в которую переводят
+    private fun setCurrencyTo(sharedPreferences: SharedPreferences) {
+        val currency: String? = sharedPreferences.getString(
+            getString(R.string.currencyToSelectKey),
+            getString(R.string.defaultNumberOfDaysSetting)
+        )
+
+        this.currencyTo = currency!!
     }
 
+    //Настройка цвета текста
     private fun setTextColor(color: Int) {
-        findViewById<TextView>(R.id.kittenText).setTextColor(color)
+        //findViewById<TextView>(R.id.kittenText).setTextColor(color)
     }
 
+    //Настройка цвета фона
     private fun setBackgroundColor(color: Int) {
         findViewById<LinearLayout>(R.id.activity_main).setBackgroundColor(color)
     }
 
+    //Создание меню
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
+    //Создание пунктов меню (настройки / обновление)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //Настройки
         if (item.itemId == R.id.settingsMenu) {
             val settingIntent = Intent(this, SettingsActivity::class.java)
             startActivity(settingIntent)
+            return true
         } else
+
+        //------------------------------------
+        //Обновление страницы
             if (item.itemId == R.id.updaing) {
                 //Заново выгружаются данные из интернета
+                onRefresh(currencyFrom, currencyTo, numberOfDays)
+                return true
+
 //                run() {
 //
 //
@@ -293,12 +384,14 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
 //
 //                    binding.cryptoCurrenciesByDay?.adapter = adapter
 //                }
+                //------------------------------------
 
             }
 
         return super.onOptionsItemSelected(item)
     }
 
+    //Изменение настроек и проверка их корректности
     override fun onPreferenceChange(preference: Preference, newValue: Any): Boolean {
         try {
             when (preference.key) {
@@ -330,6 +423,7 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
         return true
     }
 
+    //Применение настроек
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, s: String) {
         when (s) {
             getString(R.string.italicsTextKey), getString(R.string.boldTextKey) -> {
@@ -351,16 +445,31 @@ class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener,
                 setNumberOfDays(sharedPreferences)
                 ccAdapter.notifyDataSetChanged()
             }
-            getString(R.string.currencySelectKey) -> {
-                setCurrency(sharedPreferences)
+            getString(R.string.currencyFromSelectKey) -> {
+                setCurrencyFrom(sharedPreferences)
+                ccAdapter.notifyDataSetChanged()
+            }
+            getString(R.string.currencyToSelectKey) -> {
+                setCurrencyTo(sharedPreferences)
                 ccAdapter.notifyDataSetChanged()
             }
         }
     }
+
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//
+//        outState.putString("currency_From", currencyFrom)
+//    }
 
     override fun onDestroy() {
         PreferenceManager.getDefaultSharedPreferences(this)
             .unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
+
+//    override fun onSupportNavigateUp(): Boolean {
+//        val navController = this.findNavController(R.id.test_nav_fragment)
+//        return navController.navigateUp()
+//    }
 }

@@ -12,7 +12,7 @@ import com.example.currencyexchangeapplication.CryptoCurrencyByDay
 import com.example.currencyexchangeapplication.CryptoCurrency
 import retrofit2.http.Query
 import io.reactivex.Single
-
+import retrofit2.Call
 
 
 //private val moshi = Moshi
@@ -68,9 +68,10 @@ import io.reactivex.Single
 //        retrofit.create(ApiService::class.java)
 //    }
 //}
-internal interface Service {
+interface Service {
     @GET("data/v2/histoday")
     fun getHistory(@Query("fsym") fsym: String,
                    @Query("tsym") tsym: String,
-                   @Query("limit") limit: Int?): Single<Data.Answer>
+                   @Query("limit") limit: Int?): Call<Data.Answer>
 }
+//https://min-api.cryptocompare.com/data/v2/histoday ?fsym=BTC&tsym=USD&limit=4

@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
 }
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 
 android {
@@ -88,6 +89,8 @@ dependencies {
         force = true
     }
     implementation 'androidx.preference:preference:1.1.1'
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
 }
 
 kapt {

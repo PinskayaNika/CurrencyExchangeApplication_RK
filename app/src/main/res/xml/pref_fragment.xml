@@ -13,8 +13,15 @@
             android:defaultValue="@string/RUB"
             android:entries="@array/currencies_array"
             android:entryValues="@array/currencies_array"
-            android:key="@string/currencySelectKey"
-            android:title="@string/currencySelect" />
+            android:key="@string/currencyFromSelectKey"
+            android:title="@string/currencyFromSelect" />
+
+        <ListPreference
+            android:defaultValue="@string/USD"
+            android:entries="@array/currencies_array"
+            android:entryValues="@array/currencies_array"
+            android:key="@string/currencyToSelectKey"
+            android:title="@string/currencyToSelect" />
     </PreferenceCategory>
 
     <PreferenceCategory

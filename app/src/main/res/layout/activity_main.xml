@@ -10,29 +10,20 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/kittenText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="5dp"
-        android:text="@string/kitten" />
-
-
-<!--    <fragment-->
-<!--        android:id="@+id/test_nav_fragment"-->
-<!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        app:navGraph="@navigation/navigation"-->
-<!--        app:defaultNavHost="true"-->
-<!--        />-->
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cryptoCurrenciesByDay"
+    <fragment
+        android:id="@+id/test_nav_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="LinearLayoutManager" />
+        app:navGraph="@navigation/navigation"
+        app:defaultNavHost="true"
+        />
+
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/cryptoCurrenciesByDay"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:layoutManager="LinearLayoutManager" />-->
 </LinearLayout>
 </layout>

@@ -8,9 +8,15 @@
     <string name="boldText">Полужирный текст</string>
     <string name="kitten">Котёнок</string>
     <string name="darkTheme">Тёмная тема</string>
-    <string name="currencySelect">Выберите валюту</string>
+    <string name="currencyFromSelect">Выберите валюту, которую переводить</string>
+    <string name="currencyToSelect">Выберите валюту, в которую переводить</string>
+
     <string name="russianLanguage">Русский язык</string>
 
     <string name="updating">Обновить</string>
     <string name="curseInfo">Информация о курсе</string>
+    <string name="please_wait">Пожалуйста, подождите</string>
+
+    <string name="bitcoin">Биткоин></string>
+    <string name="efirium">Эфириум</string>
 </resources>
